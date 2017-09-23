@@ -31,10 +31,12 @@ abstract class Base extends AbstractApi
 
     protected function apiRequest($method, $url, $options = [])
     {
-        $data                             = isset($options[RequestOptions::QUERY]) ? $options[RequestOptions::QUERY] :
-            (isset($options[RequestOptions::FORM_PARAMS]) ? $options[RequestOptions::FORM_PARAMS] : []);
-        $header                           = $this->getHeader($url, $data);
-        $options[RequestOptions::HEADERS] = isset($options[RequestOptions::HEADERS]) ? array_merge($options[RequestOptions::HEADERS], $header) : $header;
+        if (isset($options[RequestOptions::QUERY]) && ! empty($options[RequestOptions::QUERY])) {
+            $url .= '?' . http_build_query($options[RequestOptions::QUERY]);
+        }
+        unset($options[RequestOptions::QUERY]);
+        $data                             = isset($options[RequestOptions::JSON]) ? $options[RequestOptions::JSON] : [];
+        $options[RequestOptions::HEADERS] = $this->getHeader($url, $data);
 
         return parent::apiRequest($method, $url, $options);
     }

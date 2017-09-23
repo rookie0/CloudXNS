@@ -2,6 +2,8 @@
 
 namespace Rookie0\CloudXNS\Api;
 
+use GuzzleHttp\RequestOptions;
+
 class Record extends Base
 {
 
@@ -47,9 +49,9 @@ class Record extends Base
      * @param int    $ttl    TTL 60-3600
      * @return mixed
      */
-    public function add($domainId, $value, $type, $lineId = 0, $host = '', $mx = 0, $ttl = 0)
+    public function add($domainId, $value, $type, $lineId = 1, $host = '@', $mx = 10, $ttl = 600)
     {
-        return static::parseJson($this->apiPost(self::API, [
+        return static::parseJson($this->apiJson(self::API, [
             'domain_id' => $domainId,
             'host'      => $host,
             'value'     => $value,
@@ -70,7 +72,7 @@ class Record extends Base
      */
     public function addSpare($domainId, $hostId, $recordId, $value)
     {
-        return static::parseJson($this->apiPost(self::API_SPARE, [
+        return static::parseJson($this->apiJson(self::API_SPARE, [
             'domain_id' => $domainId,
             'host_id'   => $hostId,
             'record_id' => $recordId,
@@ -82,26 +84,28 @@ class Record extends Base
      * 更新解析记录
      * @param int    $recordId
      * @param int    $domainId
-     * @param string $host
      * @param string $value
+     * @param string $type
+     * @param int    $lineId
+     * @param string $host
      * @param int    $mx
      * @param int    $ttl
-     * @param string $type
-     * @param string $lineId
      * @param string $bakIp
      * @return mixed
      */
-    public function update($recordId, $domainId, $host, $value = '', $mx = 0, $ttl = 0, $type = '', $lineId = '', $bakIp = '')
+    public function update($recordId, $domainId, $value = '', $type = '', $lineId = 1, $host = '@', $mx = 10, $ttl = 600, $bakIp = '')
     {
         return static::parseJson($this->apiRequest('PUT', $this->getFullApiUrl(self::API, $recordId), [
-            'domainId' => $domainId,
-            'host'     => $host,
-            'value'    => $value,
-            'mx'       => $mx,
-            'ttl'      => $ttl,
-            'type'     => $type,
-            'line_id'  => $lineId,
-            'bak_ip'   => $bakIp,
+            RequestOptions::JSON => [
+                'domain_id' => $domainId,
+                'host'     => $host,
+                'value'    => $value,
+                'mx'       => $mx,
+                'ttl'      => $ttl,
+                'type'     => $type,
+                'line_id'  => $lineId,
+                'bak_ip'   => $bakIp,
+            ],
         ]));
     }
 
@@ -125,7 +129,7 @@ class Record extends Base
      */
     public function pause($recordId, $domainId, $status = 0)
     {
-        return static::parseJson($this->apiPost(self::API_PAUSE, [
+        return static::parseJson($this->apiJson(self::API_PAUSE, [
             'id'        => $recordId,
             'domain_id' => $domainId,
             'status'    => $status > 0 ? 1 : 0,
@@ -141,7 +145,7 @@ class Record extends Base
      */
     public function ai($recordId, $domainId, $status = 0)
     {
-        return static::parseJson($this->apiPost(self::API_AI, [
+        return static::parseJson($this->apiJson(self::API_AI, [
             'id'        => $recordId,
             'domain_id' => $domainId,
             'status'    => $status > 0 ? 1 : 0,
@@ -166,7 +170,7 @@ class Record extends Base
      */
     public function ddns($domain, $ip = '', $lineId = 1)
     {
-        return static::parseJson($this->apiPost(self::API_DDNS, [
+        return static::parseJson($this->apiJson(self::API_DDNS, [
             'domain'  => $domain,
             'ip'      => $ip,
             'line_id' => $lineId,

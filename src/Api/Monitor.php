@@ -37,7 +37,7 @@ class Monitor extends Base
      */
     public function add($recordId, $type = 1, $url = '', $port = 80, $callback = 0)
     {
-        return static::parseJson($this->apiPost(self::API, [
+        return static::parseJson($this->apiJson(self::API, [
             'record_id'   => $recordId,
             'mon_type'    => $type,
             'mon_url'     => $url,
@@ -64,7 +64,7 @@ class Monitor extends Base
      */
     public function alarm($monitorId, $op = 0)
     {
-        return static::parseJson($this->apiPost(self::API_ALARM, [
+        return static::parseJson($this->apiJson(self::API_ALARM, [
             'monitor_id' => $monitorId,
             'op'         => $op > 0 ? 1 : 0,
         ]));

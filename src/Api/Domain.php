@@ -23,7 +23,7 @@ class Domain extends Base
      */
     public function add($domain)
     {
-        return static::parseJson($this->apiPost(self::API, ['domain' => $domain]));
+        return static::parseJson($this->apiJson(self::API, ['domain' => $domain]));
     }
 
     /**
